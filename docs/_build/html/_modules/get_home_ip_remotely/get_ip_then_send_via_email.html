@@ -1,0 +1,434 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>get_home_ip_remotely.get_ip_then_send_via_email &mdash; get_home_ip_remotely v1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> get_home_ip_remotely
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">API:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">get_home_ip_remotely Functions</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">get_home_ip_remotely</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>get_home_ip_remotely.get_ip_then_send_via_email</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for get_home_ip_remotely.get_ip_then_send_via_email</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Get the dynamic public IP from router at home, encrypt it,</span>
+<span class="sd">and send it to the remote via email automatically.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">codecs</span>
+<span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">logging</span> <span class="kn">import</span> <span class="n">handlers</span>
+
+<span class="kn">from</span> <span class="nn">cryptography.fernet</span> <span class="kn">import</span> <span class="n">Fernet</span>
+<span class="kn">from</span> <span class="nn">cryptography.hazmat.backends</span> <span class="kn">import</span> <span class="n">default_backend</span>
+<span class="kn">from</span> <span class="nn">cryptography.hazmat.primitives</span> <span class="kn">import</span> <span class="n">hashes</span>
+<span class="kn">from</span> <span class="nn">cryptography.hazmat.primitives.kdf.pbkdf2</span> <span class="kn">import</span> <span class="n">PBKDF2HMAC</span>
+
+<span class="kn">from</span> <span class="nn">email.mime.multipart</span> <span class="kn">import</span> <span class="n">MIMEMultipart</span>
+<span class="kn">from</span> <span class="nn">email.mime.base</span> <span class="kn">import</span> <span class="n">MIMEBase</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.mime.image</span> <span class="kn">import</span> <span class="n">MIMEImage</span>
+<span class="kn">from</span> <span class="nn">email.utils</span> <span class="kn">import</span> <span class="n">COMMASPACE</span><span class="p">,</span> <span class="n">formatdate</span>
+<span class="kn">from</span> <span class="nn">email</span> <span class="kn">import</span> <span class="n">encoders</span>
+<span class="kn">from</span> <span class="nn">email.header</span> <span class="kn">import</span> <span class="n">Header</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="p">(</span><span class="n">ROUTER_IP_URL</span><span class="p">,</span> <span class="n">AUTHORIZATION_HEADERS</span><span class="p">,</span> <span class="n">IP_REGEX</span><span class="p">,</span>
+            <span class="n">SEND_FROM</span><span class="p">,</span> <span class="n">SEND_TO</span><span class="p">,</span> <span class="n">USER_NAME</span><span class="p">,</span> <span class="n">PASSWORD</span><span class="p">,</span> <span class="n">SMTP_SERVER</span><span class="p">,</span>
+            <span class="n">SMTP_PORT</span><span class="p">,</span> <span class="n">EMAIL_TAG</span><span class="p">,</span> <span class="n">ENCRYPT_PASSWORD</span><span class="p">,</span> <span class="n">SALT</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="p">(</span><span class="n">ROUTER_IP_URL</span><span class="p">,</span> <span class="n">AUTHORIZATION_HEADERS</span><span class="p">,</span> <span class="n">IP_REGEX</span><span class="p">,</span>
+            <span class="n">SEND_FROM</span><span class="p">,</span> <span class="n">SEND_TO</span><span class="p">,</span> <span class="n">USER_NAME</span><span class="p">,</span> <span class="n">PASSWORD</span><span class="p">,</span> <span class="n">SMTP_SERVER</span><span class="p">,</span>
+            <span class="n">SMTP_PORT</span><span class="p">,</span> <span class="n">EMAIL_TAG</span><span class="p">,</span> <span class="n">ENCRYPT_PASSWORD</span><span class="p">,</span> <span class="n">SALT</span><span class="p">)</span>
+
+
+<span class="c1"># config logger</span>
+<span class="n">LOGNAME</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span> <span class="k">else</span> <span class="vm">__name__</span>
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">LOGNAME</span><span class="p">)</span>
+<span class="n">LOGGER</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+<span class="n">FORMATTER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
+    <span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> - </span><span class="si">%(name)s</span><span class="s1"> - </span><span class="si">%(levelname)s</span><span class="s1"> - </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="n">LOGFILE</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.log&#39;</span>
+<span class="n">HANDLERFILE</span> <span class="o">=</span> <span class="n">handlers</span><span class="o">.</span><span class="n">RotatingFileHandler</span><span class="p">(</span><span class="n">LOGFILE</span><span class="p">)</span>
+<span class="n">HANDLERFILE</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">FORMATTER</span><span class="p">)</span>
+<span class="n">LOGGER</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">HANDLERFILE</span><span class="p">)</span>
+
+<span class="n">HANDLERSTDOUT</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+<span class="n">HANDLERSTDOUT</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">FORMATTER</span><span class="p">)</span>
+<span class="n">LOGGER</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">HANDLERSTDOUT</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_ip_from_router"><a class="viewcode-back" href="../../api.html#get_home_ip_remotely.get_ip_then_send_via_email.get_ip_from_router">[docs]</a><span class="k">def</span> <span class="nf">get_ip_from_router</span><span class="p">(</span><span class="n">router_ip_url</span><span class="p">,</span> <span class="n">authorization_headers</span><span class="p">,</span> <span class="n">ip_regex</span><span class="p">,</span>
+        <span class="n">logger</span><span class="o">=</span><span class="n">LOGGER</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the dynamic public IP from router at home.</span>
+
+<span class="sd">    You should log in the router using browser, and study it to</span>
+<span class="sd">    get the three arguments. </span>
+
+<span class="sd">    :param str router_ip_url: URL of page that displays public IP realtime.</span>
+<span class="sd">    :param dict authorization_headers: request HTTP headers for authorization.</span>
+<span class="sd">    :param str ip_regex: regex string for searching public IP.</span>
+
+<span class="sd">    example::</span>
+
+<span class="sd">        router_ip_url = &#39;http://192.168.0.1/userRpm/StatusRpm.htm&#39;</span>
+<span class="sd">        authorization_headers = {</span>
+<span class="sd">            &#39;Authorization&#39;: &#39;Basic YWRtaW46SklNNDgxNDg2MGppbQ==&#39;}</span>
+<span class="sd">        ip_regex = r&#39;wanPara\s+=\s+new\s+Array\(.*?&quot;(\d+\.\d+\.\d+\.\d+)&quot;,&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">assert</span> <span class="n">router_ip_url</span><span class="p">,</span> <span class="p">(</span>
+            <span class="s1">&#39;Please input the URL of page that displays public ip realtime&#39;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">authorization_headers</span><span class="p">,</span> <span class="p">(</span>
+            <span class="s1">&#39;Please input the authorization header for HTTP request&#39;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">ip_regex</span><span class="p">,</span> <span class="p">(</span>
+            <span class="s1">&#39;Please input regular expression for find public IP&#39;</span><span class="p">)</span>
+
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">router_ip_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">authorization_headers</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">logger</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;Cannot access router, url: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">router_ip_url</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">ip_regex</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+        <span class="n">ip</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">logger</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;The new public IP: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">ip</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">logger</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;Cannot get the public IP.&#39;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ip</span></div>
+
+<div class="viewcode-block" id="send_mail"><a class="viewcode-back" href="../../api.html#get_home_ip_remotely.get_ip_then_send_via_email.send_mail">[docs]</a><span class="k">def</span> <span class="nf">send_mail</span><span class="p">(</span><span class="n">send_from</span><span class="p">,</span> <span class="n">send_to</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">user_name</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">html</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">img</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="p">[],</span> <span class="n">cc_to</span><span class="o">=</span><span class="p">[],</span> <span class="n">server</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">465</span><span class="p">,</span>
+        <span class="n">logger</span><span class="o">=</span><span class="n">LOGGER</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Send email with plain text or HTML text.</span>
+
+<span class="sd">    :param list send_from: sender email address.</span>
+<span class="sd">    :param list send_to: receiver emails address list.</span>
+<span class="sd">    :param str subject: title of email.</span>
+<span class="sd">    :param str user_name: user name of email account.</span>
+<span class="sd">    :param str password: password of email account.</span>
+<span class="sd">    :param str text: plain text to send.</span>
+<span class="sd">    :param str html: HTML text to send.</span>
+<span class="sd">    :param str img: image file path to send.</span>
+<span class="sd">    :param list files: files list as attachement.</span>
+<span class="sd">    :param list cc_to: cc emails address list.</span>
+<span class="sd">    :param str server: email SMTP server IP or domain.</span>
+<span class="sd">    :param int port: email SMTP server port.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">send_to</span><span class="p">)</span><span class="o">==</span><span class="nb">list</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">cc_to</span><span class="p">)</span><span class="o">==</span><span class="nb">list</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">files</span><span class="p">)</span><span class="o">==</span><span class="nb">list</span>
+
+    <span class="c1"># msg = MIMEMultipart(&#39;alternative&#39;)</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">(</span><span class="s1">&#39;related&#39;</span><span class="p">)</span>
+    <span class="c1"># msg = MIMEMultipart()</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">send_from</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">COMMASPACE</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">send_to</span><span class="p">)</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;cc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">COMMASPACE</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cc_to</span><span class="p">)</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">formatdate</span><span class="p">(</span><span class="n">localtime</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subject</span>
+
+    <span class="c1"># Encapsulate the plain and HTML versions of the message body in an</span>
+    <span class="c1"># &#39;alternative&#39; part, so message agents can decide which they want to display.</span>
+    <span class="c1"># msgAlternative = MIMEMultipart(&#39;alternative&#39;)</span>
+    <span class="c1"># msg.attach(msgAlternative)</span>
+
+    <span class="k">if</span> <span class="n">text</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">MIMEText</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="s1">&#39;plain&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">html</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">MIMEText</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="s1">&#39;html&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+
+    <span class="c1"># imgf = r&#39;/img/path/&#39;</span>
+    <span class="k">if</span> <span class="n">img</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">fp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+        <span class="n">msgImage</span> <span class="o">=</span> <span class="n">MIMEImage</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="n">fp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">msgImage</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;Content-ID&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;image1&gt;&#39;</span><span class="p">)</span>
+        <span class="n">msgImage</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;Content-Disposition&#39;</span><span class="p">,</span> <span class="s1">&#39;inline&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">img</span><span class="p">)</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">msgImage</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+        <span class="n">part</span> <span class="o">=</span> <span class="n">MIMEBase</span><span class="p">(</span><span class="s1">&#39;application&#39;</span><span class="p">,</span> <span class="s2">&quot;octet-stream&quot;</span><span class="p">)</span>
+        <span class="c1"># part.set_payload( open(f, &quot;rb&quot;).read() )</span>
+        <span class="n">part</span><span class="o">.</span><span class="n">set_payload</span><span class="p">(</span><span class="n">codecs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="n">encoders</span><span class="o">.</span><span class="n">encode_base64</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+        <span class="c1"># print(os.path.basename(f).encode(&#39;utf8&#39;))</span>
+        <span class="c1">#  part.add_header(&#39;Content-Disposition&#39;, &#39;attachment&#39;,</span>
+        <span class="c1">#          filename=(&#39;utf8&#39;, &#39;&#39;, os.path.basename(f).encode(&#39;utf8&#39;)))</span>
+        <span class="n">part</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;Content-Disposition&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment&#39;</span><span class="p">,</span>
+                <span class="n">filename</span><span class="o">=</span><span class="n">Header</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">f</span><span class="p">),</span> <span class="s1">&#39;utf8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+        <span class="c1">#  part.add_header(&#39;Content-Disposition&#39;, &#39;attachment; filename=ss.xlsx&#39;)</span>
+        <span class="c1"># print(os.path.basename(f))</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">smtp</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP_SSL</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+        <span class="n">smtp</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">user_name</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+        <span class="n">smtp</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">send_from</span><span class="p">,</span> <span class="n">send_to</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="c1">#  print(&#39;Error happened:\n&#39;, sys.exc_info())</span>
+        <span class="k">if</span> <span class="n">logger</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Error happened:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">())</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">smtp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="encrypt_text"><a class="viewcode-back" href="../../api.html#get_home_ip_remotely.get_ip_then_send_via_email.encrypt_text">[docs]</a><span class="k">def</span> <span class="nf">encrypt_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">encrypt_password</span><span class="p">,</span> <span class="n">salt</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">LOGGER</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Encrypt text with password and salt.</span>
+
+<span class="sd">    Example::</span>
+
+<span class="sd">        salt = b&#39;\\x66(\\x1dkY\\x860\\xfa\\xe8\\x82\\x1a\\xda\\x1eG\\xf1p&#39;</span>
+
+<span class="sd">    :param str text: text to be encrypted.</span>
+<span class="sd">    :param bytes encrypt_password: password to generate a key.</span>
+<span class="sd">    :param bytes salt: salt key for encrypted text.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#  salt = os.urandom(16)</span>
+    <span class="c1">#  salt = br&#39;\x66(\x1dkY\x860\xfa\xe8\x82\x1a\xda\x1eG\xf1p&#39;</span>
+    <span class="n">kdf</span> <span class="o">=</span> <span class="n">PBKDF2HMAC</span><span class="p">(</span>
+        <span class="n">algorithm</span><span class="o">=</span><span class="n">hashes</span><span class="o">.</span><span class="n">SHA256</span><span class="p">(),</span>
+        <span class="n">length</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+        <span class="n">salt</span><span class="o">=</span><span class="n">salt</span><span class="p">,</span>
+        <span class="n">iterations</span><span class="o">=</span><span class="mi">100000</span><span class="p">,</span>
+        <span class="n">backend</span><span class="o">=</span><span class="n">default_backend</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64encode</span><span class="p">(</span><span class="n">kdf</span><span class="o">.</span><span class="n">derive</span><span class="p">(</span><span class="n">encrypt_password</span><span class="p">))</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Fernet</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="n">token</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">logger</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Encrypted text: </span><span class="si">{token}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">token</span></div>
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../api.html#get_home_ip_remotely.get_ip_then_send_via_email.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">logger</span><span class="o">=</span><span class="n">LOGGER</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the dynamic public IP from router, encrypt it, then send it via email.</span>
+
+<span class="sd">    You need config your email account and text tag to</span>
+<span class="sd">    identify the specific email.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ip</span> <span class="o">=</span> <span class="n">get_ip_from_router</span><span class="p">(</span><span class="n">ROUTER_IP_URL</span><span class="p">,</span> <span class="n">AUTHORIZATION_HEADERS</span><span class="p">,</span> <span class="n">IP_REGEX</span><span class="p">,</span>
+            <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+    <span class="n">encrypted_text</span> <span class="o">=</span> <span class="n">encrypt_text</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">ENCRYPT_PASSWORD</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span> <span class="n">SALT</span><span class="p">,</span>
+            <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="n">subject</span> <span class="o">=</span> <span class="n">EMAIL_TAG</span> <span class="o">+</span> <span class="n">encrypted_text</span>
+    <span class="n">body_text</span> <span class="o">=</span> <span class="n">encrypted_text</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">send_mail</span><span class="p">(</span><span class="n">SEND_FROM</span><span class="p">,</span> <span class="n">SEND_TO</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">USER_NAME</span><span class="p">,</span> <span class="n">PASSWORD</span><span class="p">,</span>
+            <span class="n">body_text</span><span class="p">,</span> <span class="n">server</span><span class="o">=</span><span class="n">SMTP_SERVER</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">SMTP_PORT</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">logger</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Send email successfully&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">logger</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Send email unsuccessfully&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="n">main</span><span class="p">(</span><span class="n">LOGGER</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Michael
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

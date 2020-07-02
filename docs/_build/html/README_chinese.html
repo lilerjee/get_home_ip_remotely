@@ -1,0 +1,312 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>介绍 &mdash; get_home_ip_remotely v1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> get_home_ip_remotely
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">API:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">get_home_ip_remotely Functions</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">get_home_ip_remotely</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>介绍</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/README_chinese.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="readme-chinese">
+<span id="id1"></span><h1>介绍<a class="headerlink" href="#readme-chinese" title="Permalink to this headline">¶</a></h1>
+<p>自动远程获取家里的路由器动态公共IP.</p>
+<div class="line-block">
+<div class="line">家里：</div>
+<div class="line-block">
+<div class="line">获取路由器的动态公共IP，加密后通过邮件发送出去。</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line">远程：</div>
+<div class="line-block">
+<div class="line">从邮件服务器里面获取加密的IP邮件，解密后更新hosts文件里面指定域名对应的IP。</div>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h1>部署<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h1>
+<p>安装依赖库:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip3 install -r requirements.txt
+</pre></div>
+</div>
+<p>家里：</p>
+<ol class="arabic">
+<li><p>确定家里的路由器的IP是否公有，如果不是，让你的ISP开通。</p></li>
+<li><p>在浏览器里面登录路由器，并研究那个页面里面有动态的公有IP，
+在cookies里面是哪个字段可以提供免密码用户登录，使用什么样的正则表达式可以获取动态公有IP。</p>
+<p>例如:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Config of getting public IP from router</span>
+<span class="n">ROUTER_IP_URL</span> <span class="o">=</span> <span class="s1">&#39;http://192.168.0.1/userRpm/StatusRpm.htm&#39;</span>
+<span class="n">AUTHORIZATION_HEADERS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;Authorization&#39;</span><span class="p">:</span> <span class="s1">&#39;Basic YWRtaW46SklNNDgxNDg2MGppbQ==&#39;</span><span class="p">}</span>
+<span class="n">IP_REGEX</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;wanPara\s+=\s+new\s+Array\(.*?&quot;(\d+\.\d+\.\d+\.\d+)&quot;,&#39;</span>
+</pre></div>
+</div>
+</li>
+<li><p>修改文件’<cite>config.py</cite>’, 对怎么获取IP、邮箱与加密进行配置。</p></li>
+<li><p>添加cron job（Linux）或者Windows计划，以发送动态公有IP（需要修改下面的路径）：</p>
+<p>cron job(Linux):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span> <span class="mi">8</span><span class="o">-</span><span class="mi">20</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python3</span> <span class="o">/</span><span class="n">the</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">project</span><span class="o">/</span><span class="n">get_home_ip_remotely</span><span class="o">/</span><span class="n">get_ip_then_send_via_email</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>Add Windows计划:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ schtasks /create /tn send_ip /sc HOURLY /tr &quot;D:\Python36\python.exe D:\path_to_project\get_home_ip_remotely\get_ip_then_send_via_email.py&quot; /ST 09:00  /ET 18:00
+</pre></div>
+</div>
+</li>
+</ol>
+<p>远程:</p>
+<ol class="arabic">
+<li><p>修改文件’<cite>config.py</cite>’，对邮件与解密进行配置（如果使用同一个配置文件或许就再需要修改了）</p></li>
+<li><p>在’<cite>domain.txt</cite>’文件里面添加需要进行IP映射的域名，一行一个域名，可以用符合’<cite>#</cite>’进行注释。</p></li>
+<li><p>添加cron job（linux）或者Windows计划，以用来从邮件服务器里面获取IP并对hosts文件进行更新（需要修改下面的路径）：</p>
+<p>cron job（Linux，需要root权限以更新文件`/etc/hosts`）:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">01</span> <span class="mi">8</span><span class="o">-</span><span class="mi">20</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python3</span> <span class="o">/</span><span class="n">the</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">project</span><span class="o">/</span><span class="n">get_home_ip_remotely</span><span class="o">/</span><span class="n">pull_update_ip</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>添加Window计划:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ schtasks /create /tn update_ip /sc HOURLY /tr &quot;D:\Python36\python.exe D:\path_to_project\get_home_ip_remotely\pull_update_ip.py&quot; /ST 09:01 /ET 18:01 /ru system
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="id3">
+<h1>怎么运行单元测试<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h1>
+<p>首先，修改配置文件’<cite>config.py</cite>’。</p>
+<ul>
+<li><p>运行所有的单元测试用例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd /project/root/dir
+$ python3 -m unittest discover tests -v
+</pre></div>
+</div>
+<p>或者:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd /project/root/dir
+$ python3 -m unittest -v
+</pre></div>
+</div>
+</li>
+<li><p>运行某些模块下面的单元测试用例或者莫个单元测试用例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd /project/root/dir
+$ python3 -m unittest -v tests.test_get_ip_then_send_via_email
+$ python3 -m unittest -v tests.test_pull_update_ip
+
+$ python3 -m unittest -v tests.test_pull_update_ip.TestDecryptText
+$ python3 -m unittest -v tests.test_pull_update_ip.TestUpdateHosts
+</pre></div>
+</div>
+</li>
+</ul>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">API:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">get_home_ip_remotely Functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-get_home_ip_remotely.get_ip_then_send_via_email">get_home_ip_remotely.get_ip_then_send_via_email Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-get_home_ip_remotely.pull_update_ip">get_home_ip_remotely.pull_update_ip Functions</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="license">
+<h1>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h1>
+<p>Apache License 2.0</p>
+<div class="section" id="indices-and-tables">
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Michael
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

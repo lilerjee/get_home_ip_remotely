@@ -1,0 +1,361 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>get_home_ip_remotely Functions &mdash; get_home_ip_remotely v1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to get_home_ip_remotely’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> get_home_ip_remotely
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">API:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">get_home_ip_remotely Functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-get_home_ip_remotely.get_ip_then_send_via_email">get_home_ip_remotely.get_ip_then_send_via_email Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-get_home_ip_remotely.pull_update_ip">get_home_ip_remotely.pull_update_ip Functions</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">get_home_ip_remotely</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>get_home_ip_remotely Functions</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="get-home-ip-remotely-functions">
+<span id="api"></span><h1>get_home_ip_remotely Functions<a class="headerlink" href="#get-home-ip-remotely-functions" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-get_home_ip_remotely.get_ip_then_send_via_email">
+<span id="get-home-ip-remotely-get-ip-then-send-via-email-functions"></span><h2>get_home_ip_remotely.get_ip_then_send_via_email Functions<a class="headerlink" href="#module-get_home_ip_remotely.get_ip_then_send_via_email" title="Permalink to this headline">¶</a></h2>
+<p>Get the dynamic public IP from router at home, encrypt it,
+and send it to the remote via email automatically.</p>
+<dl class="py function">
+<dt id="get_home_ip_remotely.get_ip_then_send_via_email.get_ip_from_router">
+<code class="sig-prename descclassname">get_home_ip_remotely.get_ip_then_send_via_email.</code><code class="sig-name descname">get_ip_from_router</code><span class="sig-paren">(</span><em class="sig-param">router_ip_url</em>, <em class="sig-param">authorization_headers</em>, <em class="sig-param">ip_regex</em>, <em class="sig-param">logger=&lt;Logger get_home_ip_remotely.get_ip_then_send_via_email (DEBUG)&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_home_ip_remotely/get_ip_then_send_via_email.html#get_ip_from_router"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_home_ip_remotely.get_ip_then_send_via_email.get_ip_from_router" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the dynamic public IP from router at home.</p>
+<p>You should log in the router using browser, and study it to
+get the three arguments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>router_ip_url</strong> (<em>str</em>) – URL of page that displays public IP realtime.</p></li>
+<li><p><strong>authorization_headers</strong> (<em>dict</em>) – request HTTP headers for authorization.</p></li>
+<li><p><strong>ip_regex</strong> (<em>str</em>) – regex string for searching public IP.</p></li>
+</ul>
+</dd>
+</dl>
+<p>example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">router_ip_url</span> <span class="o">=</span> <span class="s1">&#39;http://192.168.0.1/userRpm/StatusRpm.htm&#39;</span>
+<span class="n">authorization_headers</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;Authorization&#39;</span><span class="p">:</span> <span class="s1">&#39;Basic YWRtaW46SklNNDgxNDg2MGppbQ==&#39;</span><span class="p">}</span>
+<span class="n">ip_regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;wanPara\s+=\s+new\s+Array\(.*?&quot;(\d+\.\d+\.\d+\.\d+)&quot;,&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="get_home_ip_remotely.get_ip_then_send_via_email.send_mail">
+<code class="sig-prename descclassname">get_home_ip_remotely.get_ip_then_send_via_email.</code><code class="sig-name descname">send_mail</code><span class="sig-paren">(</span><em class="sig-param">send_from</em>, <em class="sig-param">send_to</em>, <em class="sig-param">subject</em>, <em class="sig-param">user_name</em>, <em class="sig-param">password</em>, <em class="sig-param">text=''</em>, <em class="sig-param">html=''</em>, <em class="sig-param">img=''</em>, <em class="sig-param">files=[]</em>, <em class="sig-param">cc_to=[]</em>, <em class="sig-param">server='localhost'</em>, <em class="sig-param">port=465</em>, <em class="sig-param">logger=&lt;Logger get_home_ip_remotely.get_ip_then_send_via_email (DEBUG)&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_home_ip_remotely/get_ip_then_send_via_email.html#send_mail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_home_ip_remotely.get_ip_then_send_via_email.send_mail" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send email with plain text or HTML text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>send_from</strong> (<em>list</em>) – sender email address.</p></li>
+<li><p><strong>send_to</strong> (<em>list</em>) – receiver emails address list.</p></li>
+<li><p><strong>subject</strong> (<em>str</em>) – title of email.</p></li>
+<li><p><strong>user_name</strong> (<em>str</em>) – user name of email account.</p></li>
+<li><p><strong>password</strong> (<em>str</em>) – password of email account.</p></li>
+<li><p><strong>text</strong> (<em>str</em>) – plain text to send.</p></li>
+<li><p><strong>html</strong> (<em>str</em>) – HTML text to send.</p></li>
+<li><p><strong>img</strong> (<em>str</em>) – image file path to send.</p></li>
+<li><p><strong>files</strong> (<em>list</em>) – files list as attachement.</p></li>
+<li><p><strong>cc_to</strong> (<em>list</em>) – cc emails address list.</p></li>
+<li><p><strong>server</strong> (<em>str</em>) – email SMTP server IP or domain.</p></li>
+<li><p><strong>port</strong> (<em>int</em>) – email SMTP server port.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="get_home_ip_remotely.get_ip_then_send_via_email.encrypt_text">
+<code class="sig-prename descclassname">get_home_ip_remotely.get_ip_then_send_via_email.</code><code class="sig-name descname">encrypt_text</code><span class="sig-paren">(</span><em class="sig-param">text</em>, <em class="sig-param">encrypt_password</em>, <em class="sig-param">salt</em>, <em class="sig-param">logger=&lt;Logger get_home_ip_remotely.get_ip_then_send_via_email (DEBUG)&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_home_ip_remotely/get_ip_then_send_via_email.html#encrypt_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_home_ip_remotely.get_ip_then_send_via_email.encrypt_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encrypt text with password and salt.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">salt</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x66</span><span class="s1">(</span><span class="se">\x1d</span><span class="s1">kY</span><span class="se">\x86</span><span class="s1">0</span><span class="se">\xfa\xe8\x82\x1a\xda\x1e</span><span class="s1">G</span><span class="se">\xf1</span><span class="s1">p&#39;</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>str</em>) – text to be encrypted.</p></li>
+<li><p><strong>encrypt_password</strong> (<em>bytes</em>) – password to generate a key.</p></li>
+<li><p><strong>salt</strong> (<em>bytes</em>) – salt key for encrypted text.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="get_home_ip_remotely.get_ip_then_send_via_email.main">
+<code class="sig-prename descclassname">get_home_ip_remotely.get_ip_then_send_via_email.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param">logger=&lt;Logger get_home_ip_remotely.get_ip_then_send_via_email (DEBUG)&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_home_ip_remotely/get_ip_then_send_via_email.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_home_ip_remotely.get_ip_then_send_via_email.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the dynamic public IP from router, encrypt it, then send it via email.</p>
+<p>You need config your email account and text tag to
+identify the specific email.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-get_home_ip_remotely.pull_update_ip">
+<span id="get-home-ip-remotely-pull-update-ip-functions"></span><h2>get_home_ip_remotely.pull_update_ip Functions<a class="headerlink" href="#module-get_home_ip_remotely.pull_update_ip" title="Permalink to this headline">¶</a></h2>
+<p>Pull the public IP from email server, decrypt it and update hosts with it.</p>
+<dl class="py function">
+<dt id="get_home_ip_remotely.pull_update_ip.get_mail_text">
+<code class="sig-prename descclassname">get_home_ip_remotely.pull_update_ip.</code><code class="sig-name descname">get_mail_text</code><span class="sig-paren">(</span><em class="sig-param">user_name</em>, <em class="sig-param">password</em>, <em class="sig-param">server</em>, <em class="sig-param">port=993</em>, <em class="sig-param">return_subject=False</em>, <em class="sig-param">logger=&lt;Logger get_home_ip_remotely.pull_update_ip (DEBUG)&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_home_ip_remotely/pull_update_ip.html#get_mail_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_home_ip_remotely.pull_update_ip.get_mail_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the email which has home IP.</p>
+<p>Not only get the email, but also delete the old emails.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_name</strong> (<em>str</em>) – user name of email account.</p></li>
+<li><p><strong>password</strong> (<em>str</em>) – password of email account.</p></li>
+<li><p><strong>server</strong> (<em>str</em>) – email IMAP server IP or domain.</p></li>
+<li><p><strong>port</strong> (<em>int</em>) – email IMAP server port.</p></li>
+<li><p><strong>return_subject</strong> (<em>bool</em>) – return subject or not.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="get_home_ip_remotely.pull_update_ip.decrypt_text">
+<code class="sig-prename descclassname">get_home_ip_remotely.pull_update_ip.</code><code class="sig-name descname">decrypt_text</code><span class="sig-paren">(</span><em class="sig-param">encrypted_text</em>, <em class="sig-param">encrypted_password</em>, <em class="sig-param">salt</em>, <em class="sig-param">logger=&lt;Logger get_home_ip_remotely.pull_update_ip (DEBUG)&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_home_ip_remotely/pull_update_ip.html#decrypt_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_home_ip_remotely.pull_update_ip.decrypt_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decrypt text with password and salt.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">salt</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x66</span><span class="s1">(</span><span class="se">\x1d</span><span class="s1">kY</span><span class="se">\x86</span><span class="s1">0</span><span class="se">\xfa\xe8\x82\x1a\xda\x1e</span><span class="s1">G</span><span class="se">\xf1</span><span class="s1">p&#39;</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>encrypted_password</strong> (<em>bytes</em>) – password to generate a key.</p></li>
+<li><p><strong>salt</strong> (<em>bytes</em>) – salt key for encrypted text.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="get_home_ip_remotely.pull_update_ip.update_hosts">
+<code class="sig-prename descclassname">get_home_ip_remotely.pull_update_ip.</code><code class="sig-name descname">update_hosts</code><span class="sig-paren">(</span><em class="sig-param">ip</em>, <em class="sig-param">hosts_file='/etc/hosts'</em>, <em class="sig-param">logger=&lt;Logger get_home_ip_remotely.pull_update_ip (DEBUG)&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_home_ip_remotely/pull_update_ip.html#update_hosts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_home_ip_remotely.pull_update_ip.update_hosts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update home IP for domains in hosts file.</p>
+<dl class="simple">
+<dt>home_ip.txt</dt><dd><p>save the new home ip, just one line.</p>
+</dd>
+<dt>domain.txt</dt><dd><p>contain the domains for home ip, one domain per line,
+and can comment one line with #.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ip</strong> (<em>str</em>) – IP to be updated.</p></li>
+<li><p><strong>hosts_file</strong> (<em>str</em>) – hosts file path.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="get_home_ip_remotely.pull_update_ip.main">
+<code class="sig-prename descclassname">get_home_ip_remotely.pull_update_ip.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param">hosts_file='/etc/hosts'</em>, <em class="sig-param">logger=&lt;Logger get_home_ip_remotely.pull_update_ip (DEBUG)&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_home_ip_remotely/pull_update_ip.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_home_ip_remotely.pull_update_ip.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get encrypted text from email server, decrypt it, and update hosts with it.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to get_home_ip_remotely’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Michael
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
